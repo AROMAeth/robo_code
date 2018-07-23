@@ -1,0 +1,8 @@
+prefix=/home/pi/aroma/catkin_ws/devel
+
+Name: aroma_cam
+Description: Description of aroma_cam
+Version: 1.0.0
+Cflags: 
+Libs: -L/home/pi/aroma/catkin_ws/devel/lib 
+Requires: 

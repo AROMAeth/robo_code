@@ -1,0 +1,4 @@
+# Hashes of file build rules.
+bc287f8161f5c8024740c33c2d019ecb /home/pi/aroma/catkin_ws/devel/include/raspicam_node/CameraConfig.h
+9b6c13aab4280c8b7225732dec13eba2 CMakeFiles/clean_test_results
+22659fb6696e3fb2f523bb244127d4ff raspicam_node/CMakeFiles/raspicam_node_gencfg

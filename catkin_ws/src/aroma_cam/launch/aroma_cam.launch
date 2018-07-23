@@ -1,0 +1,6 @@
+<launch>
+
+    <node name="aroma_cam_node" pkg="aroma_cam" type="cam_to_ros.py" output="screen">
+    </node>
+
+</launch>
