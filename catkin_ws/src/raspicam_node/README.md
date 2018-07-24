@@ -1,4 +1,4 @@
-# raspicam_node
+# raspicam_node -> "forked from UbiquityRobotics/raspicam_node"
 
 ROS node for the Raspberry Pi Camera Module. Works with both the V1.x and V2.x versions of the module. We recommend using the v2.x cameras as they have better auto gain, and the general image quality is better. 
 
