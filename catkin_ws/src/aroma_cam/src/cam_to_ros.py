@@ -35,10 +35,10 @@ class AromaCam(object):
 
     def takePictures(self):
         rate = rospy.Rate(10) # 10hz
-        #self.camera.zoom (0.25,0.25,0.75,0.75)
+        self.camera.zoom = (0.25,0.25,0.75,0.75)
         while not rospy.is_shutdown():
 
-            camera.capture(output,'rgb')
+            self.camera.capture(self.output,'rgb')
             #print ('Pic Taken')
             #camera.stop_preview()
             self.pic = self.output.reshape((1952,2592,3))            
