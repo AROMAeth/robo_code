@@ -1,3 +1,9 @@
+This is the main node which is the interface to our camera.
+
+Credits to https://github.com/UbiquityRobotics/raspicam_node !!!
+
+We copied/forked the code from there and adapt it here to use it with our special setup and special situation with the camera!!!
+
 # raspicam_node
 
 ROS node for the Raspberry Pi Camera Module. Works with both the V1.x and V2.x versions of the module. We recommend using the v2.x cameras as they have better auto gain, and the general image quality is better. 
