@@ -3,6 +3,8 @@
 import rospy
 import cv2
 from std_msgs.msg import String
+from std_msgs.msg import Float32
+from std_msgs.msg import Bool
 
 import RPi.GPIO as GPIO
 import time
@@ -47,9 +49,9 @@ class AromaStepper(object):
           [0,0,0,1],
           [1,0,0,1]
         ]
-        self.move_backward(500,0.5)
-	    time.sleep(5)
-        self.move_forward(500,0.1)
+        #self.move_backward(500,0.5)
+	# time.sleep(5)
+        #self.move_forward(500,0.1)
 
     def callback_stop(self,msg):
         self.move_forward = False
@@ -71,14 +73,14 @@ class AromaStepper(object):
           time.sleep(max(0.001/speed,0.001))
 
     def move_forward(self,steps, speed):
-      if(self.move_backward==True)
-        break
-      else
+      if self.move_backward==True:
+	return 0
+      else:
         self.move_forward = True
         for i in range(steps):
-            if (self.move_forward=False)
+            if self.move_forward==False:
                 break
-            else
+            else:
                 for halfstep in range(7,-1,-1):
                     for pin in range(4):
                         GPIO.output(self.control_pins[pin], self.halfstep_seq[halfstep][pin])
