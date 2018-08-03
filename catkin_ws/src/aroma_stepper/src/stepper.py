@@ -28,8 +28,33 @@ class AromaStepper(object):
         self.sub_topic1 = '/aroma_interface/stop'
         self.subscriber1 = rospy.Subscriber(self.sub_topic1, Bool, self.callback_stop,queue_size=1)
 
+
+
+        self.sub_topic2 = '/aroma_interface/speed_for'
+        self.subscriber2 = rospy.Subscriber(self.sub_topic2, Float32, self.callback_speed_for,queue_size=1)
+
+        self.sub_topic3 = '/aroma_interface/steps_for'
+        self.subscriber3 = rospy.Subscriber(self.sub_topic3, Float32, self.callback_steps_for,queue_size=1)
+
         self.sub_topic4 = '/aroma_interface/move_steps_for'
         self.subscriber4 = rospy.Subscriber(self.sub_topic4, Bool, self.callback_move_steps_for,queue_size=1)
+
+        self.sub_topic5 = '/aroma_interface/move_inf_for'
+        self.subscriber5 = rospy.Subscriber(self.sub_topic5, Bool, self.callback_move_inf_for,queue_size=1)
+
+
+
+        self.sub_topic6 = '/aroma_interface/speed_back'
+        self.subscriber6 = rospy.Subscriber(self.sub_topic6, Float32, self.callback_speed_back,queue_size=1)
+
+        self.sub_topic7 = '/aroma_interface/steps_back'
+        self.subscriber7 = rospy.Subscriber(self.sub_topic7, Float32, self.callback_steps_back,queue_size=1)
+
+        self.sub_topic8 = '/aroma_interface/move_steps_back'
+        self.subscriber8 = rospy.Subscriber(self.sub_topic8, Bool, self.callback_move_steps_back,queue_size=1)
+
+        self.sub_topic9 = '/aroma_interface/move_inf_back'
+        self.subscriber9 = rospy.Subscriber(self.sub_topic9, Bool, self.callback_move_inf_back,queue_size=1)
 
 
 
@@ -58,22 +83,61 @@ class AromaStepper(object):
         self.want_move_backward = False
         print "GOING TO STOP NOW!"
 
+
+    
+    def callback_speed_for(self,msg):
+        print "revieved call to change forward speed to ..." + str(msg)
+        self.speed_forward = msg
+
+    def callback_steps_for(self,msg):
+        print "revieved call to change forward number of steps to ..." + str(msg)
+        self.steps_forward = msg
+
     def callback_move_steps_for(self,msg):
         print "revieved call to move forward..."
         self.move_forward(self.steps_forward,self.speed_forward) 
+
+    def callback_move_inf_for(self,msg):
+        print "revieved call to move INFINITELY forward..."
+        self.move_inf_forward(self.steps_forward,self.speed_forward) 
+
+    
+
+    def callback_speed_back(self,msg):
+        print "revieved call to change backward speed to ..." + str(msg)
+        self.speed_backward = msg
+
+    def callback_steps_back(self,msg):
+        print "revieved call to change backward number of steps to ..." + str(msg)
+        self.steps_backward = msg
+
+    def callback_move_steps_back(self,msg):
+        print "revieved call to move backward..."
+        self.move_backward(self.steps_backward,self.speed_backward) 
+
+    def callback_move_inf_back(self,msg):
+        print "revieved call to move INFINITELY backward..."
+        self.move_inf_backward(self.steps_backward,self.speed_backward) 
 
 
     # speed from 0 to 1 (one being the fastest)
     # steps 50 steps = one rotation
     def move_backward(self,steps, speed):
-      for i in range(steps):
-        for halfstep in range(8):
-          for pin in range(4):
-            GPIO.output(self.control_pins[pin], self.halfstep_seq[halfstep][pin])
-          time.sleep(max(0.001/speed,0.001))
+      if (self.want_move_forward!=True and self.want_move_backward!=True):
+        self.want_move_backward = True
+        for i in range(steps):
+          if self.want_move_backward==False:
+            break
+          else:
+            for halfstep in range(8):
+              for pin in range(4):
+                GPIO.output(self.control_pins[pin], self.halfstep_seq[halfstep][pin])
+              time.sleep(max(0.001/speed,0.001))
+        self.want_move_backward = False
 
     def move_forward(self,steps, speed):
-      if self.want_move_backward!=True:
+      #to exclude multiple instances starting after each other!!!
+      if (self.want_move_backward!=True and self.want_move_forward!=True):
         self.want_move_forward = True
         for i in range(steps):
             if self.want_move_forward==False:
@@ -83,35 +147,29 @@ class AromaStepper(object):
                     for pin in range(4):
                         GPIO.output(self.control_pins[pin], self.halfstep_seq[halfstep][pin])
                     time.sleep(max(0.001/speed,0.001))
-	self.want_move_forward = False
+	    self.want_move_forward = False
 
 
-    def takePictures(self):
-        rate = rospy.Rate(10) # 10hz
-        self.camera.zoom = (0.25,0.25,0.75,0.75)
-        while not rospy.is_shutdown():
 
-            self.camera.capture(self.output,'rgb')
-            #print ('Pic Taken')
-            #camera.stop_preview()
-            self.pic = self.output.reshape((1952,2592,3))            
+      def move_inf_backward(self,steps, speed):
+      if (self.want_move_forward!=True and self.want_move_backward!=True):
+        self.want_move_backward = True
+        while self.want_move_backward!=False:
+          for halfstep in range(8):
+            for pin in range(4):
+              GPIO.output(self.control_pins[pin], self.halfstep_seq[halfstep][pin])
+            time.sleep(max(0.001/speed,0.001))
+        
 
-            try:
-                self.image_pub.publish(self.bridge.cv2_to_imgmsg(self.pic, "bgr8"))
-            except CvBridgeError as e:
-                print(e)
-
-            rate.sleep()
-
-
-    def defineSettings(self):
-        # Now fix the values
-        self.camera.shutter_speed = self.camera.exposure_speed
-        self.camera.exposure_mode = 'off'
-        g = self.camera.awb_gains
-        self.camera.awb_mode = 'off'
-        self.camera.awb_gains = g
-        # Finally, take several photos with the fixed settings
+    def move_inf_forward(self,steps, speed):
+      #to exclude multiple instances starting after each other!!!
+      if (self.want_move_backward!=True and self.want_move_forward!=True):
+        self.want_move_forward = True
+        while self.want_move_forward!=False:
+          for halfstep in range(7,-1,-1):
+            for pin in range(4):
+              GPIO.output(self.control_pins[pin], self.halfstep_seq[halfstep][pin])
+            time.sleep(max(0.001/speed,0.001))
 
 
 
