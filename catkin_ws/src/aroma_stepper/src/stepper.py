@@ -148,7 +148,7 @@ class AromaStepper(object):
                     for pin in range(4):
                         GPIO.output(self.control_pins[pin], self.halfstep_seq[halfstep][pin])
                     time.sleep(max(0.001/speed,0.001))
-	    self.want_move_forward = False
+	self.want_move_forward = False
 
 
 
