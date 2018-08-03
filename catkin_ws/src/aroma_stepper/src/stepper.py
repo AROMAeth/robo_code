@@ -17,8 +17,8 @@ class AromaStepper(object):
         GPIO.setmode(GPIO.BOARD)
 
         #INIT ALL PARAMETERS:
-        self.move_backward = False
-        self.move_forward = False
+        self.want_move_backward = False
+        self.want_move_forward = False
         self.speed_forward = 0.1
         self.steps_forward = 200
         self.speed_backward = 0.5
@@ -54,8 +54,8 @@ class AromaStepper(object):
         #self.move_forward(500,0.1)
 
     def callback_stop(self,msg):
-        self.move_forward = False
-        self.move_backward = False
+        self.want_move_forward = False
+        self.want_move_backward = False
         print "GOING TO STOP NOW!"
 
     def callback_move_steps_for(self,msg):
@@ -73,19 +73,17 @@ class AromaStepper(object):
           time.sleep(max(0.001/speed,0.001))
 
     def move_forward(self,steps, speed):
-      if self.move_backward==True:
-	return 0
-      else:
-        self.move_forward = True
+      if self.want_move_backward!=True:
+        self.want_move_forward = True
         for i in range(steps):
-            if self.move_forward==False:
+            if self.want_move_forward==False:
                 break
             else:
                 for halfstep in range(7,-1,-1):
                     for pin in range(4):
                         GPIO.output(self.control_pins[pin], self.halfstep_seq[halfstep][pin])
                     time.sleep(max(0.001/speed,0.001))
-
+	self.want_move_forward = False
 
 
     def takePictures(self):
