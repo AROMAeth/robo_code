@@ -11,6 +11,7 @@ import rospkg
 from std_msgs.msg import String
 from std_msgs.msg import Float32
 from std_msgs.msg import Bool
+from std_msgs.msg import Int32
 
 class HellowWorldGTK:
 	def __init__(self):
@@ -33,12 +34,12 @@ class HellowWorldGTK:
 		self.pub1 = rospy.Publisher('aroma_interface/stop', Bool, queue_size=1)
 		
 		self.pub2 = rospy.Publisher('aroma_interface/speed_for', Float32, queue_size=1)
-		self.pub3 = rospy.Publisher('aroma_interface/steps_for', Float32, queue_size=1)
+		self.pub3 = rospy.Publisher('aroma_interface/steps_for', Int32, queue_size=1)
 		self.pub4 = rospy.Publisher('aroma_interface/move_steps_for', Bool, queue_size=1)
 		self.pub5 = rospy.Publisher('aroma_interface/move_inf_for', Bool, queue_size=1)
 		
 		self.pub6 = rospy.Publisher('aroma_interface/speed_back', Float32, queue_size=1)
-		self.pub7 = rospy.Publisher('aroma_interface/steps_back', Float32, queue_size=1)
+		self.pub7 = rospy.Publisher('aroma_interface/steps_back', Int32, queue_size=1)
 		self.pub8 = rospy.Publisher('aroma_interface/move_steps_back', Bool, queue_size=1)
 		self.pub9 = rospy.Publisher('aroma_interface/move_inf_back', Bool, queue_size=1)
 
@@ -57,7 +58,7 @@ class HellowWorldGTK:
 
 	def scale_steps_for_val(self, widget):
 		print "Steps forward" + str(widget.get_value ())
-		self.pub3.publish(Float32(widget.get_value ()))
+		self.pub3.publish(Int32(widget.get_value ()))
 
 	def move_steps_for_clicked_cb(self, widget):
 		print ("move ... steps forward")
@@ -75,7 +76,7 @@ class HellowWorldGTK:
 
 	def scale_steps_back_val(self, widget):
 		print "Steps backward" + str(widget.get_value ())
-		self.pub7.publish(Float32(widget.get_value ()))
+		self.pub7.publish(Int32(widget.get_value ()))
 
 	def move_steps_back_clicked_cb(self, widget):
 		#Simple button cliked event
