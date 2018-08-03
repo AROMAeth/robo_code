@@ -13,6 +13,24 @@ import time
 class AromaStepper(object):
     def __init__(self):
         GPIO.setmode(GPIO.BOARD)
+
+        #INIT ALL PARAMETERS:
+        self.move_backward = False
+        self.move_forward = False
+        self.speed_forward = 0.1
+        self.steps_forward = 200
+        self.speed_backward = 0.5
+        self.steps_backward = 500
+
+        #CREATE ALL THE SUBSCRIBERS:
+        self.sub_topic1 = '/aroma_interface/stop'
+        self.subscriber1 = rospy.Subscriber(self.sub_topic1, Bool, self.callback_stop,queue_size=1)
+
+        self.sub_topic4 = '/aroma_interface/move_steps_for'
+        self.subscriber4 = rospy.Subscriber(self.sub_topic4, Bool, self.callback_move_steps_for,queue_size=1)
+
+
+
         self.control_pins = [7,11,13,15]
 
         for pin in self.control_pins:
@@ -30,8 +48,18 @@ class AromaStepper(object):
           [1,0,0,1]
         ]
         self.move_backward(500,0.5)
-	time.sleep(5)
+	    time.sleep(5)
         self.move_forward(500,0.1)
+
+    def callback_stop(self,msg):
+        self.move_forward = False
+        self.move_backward = False
+        print "GOING TO STOP NOW!"
+
+    def callback_move_steps_for(self,msg):
+        print "revieved call to move forward..."
+        self.move_forward(self.steps_forward,self.speed_forward) 
+
 
     # speed from 0 to 1 (one being the fastest)
     # steps 50 steps = one rotation
@@ -43,11 +71,18 @@ class AromaStepper(object):
           time.sleep(max(0.001/speed,0.001))
 
     def move_forward(self,steps, speed):
-      for i in range(steps):
-        for halfstep in range(7,-1,-1):
-          for pin in range(4):
-            GPIO.output(self.control_pins[pin], self.halfstep_seq[halfstep][pin])
-          time.sleep(max(0.001/speed,0.001))
+      if(self.move_backward==True)
+        break
+      else
+        self.move_forward = True
+        for i in range(steps):
+            if (self.move_forward=False)
+                break
+            else
+                for halfstep in range(7,-1,-1):
+                    for pin in range(4):
+                        GPIO.output(self.control_pins[pin], self.halfstep_seq[halfstep][pin])
+                    time.sleep(max(0.001/speed,0.001))
 
 
 
