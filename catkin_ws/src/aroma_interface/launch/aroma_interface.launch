@@ -1,0 +1,6 @@
+<launch>
+
+    <node name="aroma_interface_node" pkg="aroma_interface" type="aroma_interface.py" output="screen">
+    </node>
+
+</launch>
