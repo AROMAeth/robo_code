@@ -13,13 +13,13 @@ import time
 class AromaStepper(object):
     def __init__(self):
         GPIO.setmode(GPIO.BOARD)
-        control_pins = [7,11,13,15]
+        self.control_pins = [7,11,13,15]
 
-        for pin in control_pins:
+        for pin in self.control_pins:
           GPIO.setup(pin, GPIO.OUT)
           GPIO.output(pin, 0)
 
-        halfstep_seq = [
+        self.halfstep_seq = [
           [1,0,0,0],
           [1,1,0,0],
           [0,1,0,0],
@@ -30,7 +30,8 @@ class AromaStepper(object):
           [1,0,0,1]
         ]
         self.move_backward(500,0.5)
-        self.move_forward(50,0.1)
+	time.sleep(5)
+        self.move_forward(500,0.1)
 
     # speed from 0 to 1 (one being the fastest)
     # steps 50 steps = one rotation
@@ -38,14 +39,14 @@ class AromaStepper(object):
       for i in range(steps):
         for halfstep in range(8):
           for pin in range(4):
-            GPIO.output(control_pins[pin], halfstep_seq[halfstep][pin])
+            GPIO.output(self.control_pins[pin], self.halfstep_seq[halfstep][pin])
           time.sleep(max(0.001/speed,0.001))
 
     def move_forward(self,steps, speed):
       for i in range(steps):
         for halfstep in range(7,-1,-1):
           for pin in range(4):
-            GPIO.output(control_pins[pin], halfstep_seq[halfstep][pin])
+            GPIO.output(self.control_pins[pin], self.halfstep_seq[halfstep][pin])
           time.sleep(max(0.001/speed,0.001))
 
 
