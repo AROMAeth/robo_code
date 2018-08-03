@@ -5,10 +5,11 @@ import cv2
 from std_msgs.msg import String
 from std_msgs.msg import Float32
 from std_msgs.msg import Bool
+from std_msgs.msg import Int32
 
 import RPi.GPIO as GPIO
 import time
-
+import numpy as np
 
 
 
@@ -34,7 +35,7 @@ class AromaStepper(object):
         self.subscriber2 = rospy.Subscriber(self.sub_topic2, Float32, self.callback_speed_for,queue_size=1)
 
         self.sub_topic3 = '/aroma_interface/steps_for'
-        self.subscriber3 = rospy.Subscriber(self.sub_topic3, Float32, self.callback_steps_for,queue_size=1)
+        self.subscriber3 = rospy.Subscriber(self.sub_topic3, Int32, self.callback_steps_for,queue_size=1)
 
         self.sub_topic4 = '/aroma_interface/move_steps_for'
         self.subscriber4 = rospy.Subscriber(self.sub_topic4, Bool, self.callback_move_steps_for,queue_size=1)
@@ -48,7 +49,7 @@ class AromaStepper(object):
         self.subscriber6 = rospy.Subscriber(self.sub_topic6, Float32, self.callback_speed_back,queue_size=1)
 
         self.sub_topic7 = '/aroma_interface/steps_back'
-        self.subscriber7 = rospy.Subscriber(self.sub_topic7, Float32, self.callback_steps_back,queue_size=1)
+        self.subscriber7 = rospy.Subscriber(self.sub_topic7, Int32, self.callback_steps_back,queue_size=1)
 
         self.sub_topic8 = '/aroma_interface/move_steps_back'
         self.subscriber8 = rospy.Subscriber(self.sub_topic8, Bool, self.callback_move_steps_back,queue_size=1)
@@ -87,11 +88,11 @@ class AromaStepper(object):
     
     def callback_speed_for(self,msg):
         print "revieved call to change forward speed to ..." + str(msg)
-        self.speed_forward = msg
+        self.speed_forward = msg.data
 
     def callback_steps_for(self,msg):
         print "revieved call to change forward number of steps to ..." + str(msg)
-        self.steps_forward = msg
+        self.steps_forward = msg.data
 
     def callback_move_steps_for(self,msg):
         print "revieved call to move forward..."
@@ -105,11 +106,11 @@ class AromaStepper(object):
 
     def callback_speed_back(self,msg):
         print "revieved call to change backward speed to ..." + str(msg)
-        self.speed_backward = msg
+        self.speed_backward = msg.data
 
     def callback_steps_back(self,msg):
         print "revieved call to change backward number of steps to ..." + str(msg)
-        self.steps_backward = msg
+        self.steps_backward = msg.data
 
     def callback_move_steps_back(self,msg):
         print "revieved call to move backward..."
@@ -151,7 +152,7 @@ class AromaStepper(object):
 
 
 
-      def move_inf_backward(self,steps, speed):
+    def move_inf_backward(self,steps, speed):
       if (self.want_move_forward!=True and self.want_move_backward!=True):
         self.want_move_backward = True
         while self.want_move_backward!=False:
