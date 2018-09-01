@@ -1,3 +1,20 @@
+# Launching
+There are some issues due to the sudo command which is necesarry to read out the usb ports, therefore before you will be able to launch the following commands are necessary:
+
+sudo -s
+
+source /opt/ros/kinetic/setup.bash 
+
+source devel/setup.bash 
+
+To exit this root mode you can simply use "su "YOUR NORMAL USERNAME""
+
+Other variant: make sure to have passwordless sudo and then you can simply source the "root_setup.sh" file,...
+
+Then in the root mode simply type: roslaunch arducam_node arducam_node.launch 
+
+ATTENTION: ONLY USE THIS SUDO MODE FOR LAUNCHING THE STUFF BUT NEVER FOR BUILDING ETC.
+
 # Description
 This is a further development of the ArduCAM USB Camera Shield which should yield to a ROS integrated version. Due to time issues, this is done here locally in our aroma repository. 
 

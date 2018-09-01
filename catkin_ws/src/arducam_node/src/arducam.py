@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import sys
 import os
 import time
@@ -9,6 +11,10 @@ import json
 import Image
 
 import ArducamSDK
+
+import rospy
+from sensor_msgs.msg import CompressedImage, Image
+from cv_bridge import CvBridge, CvBridgeError
 
 
 global cfg,handle,running,Width,Heigth,save_flag,color_mode
@@ -154,15 +160,21 @@ def captureImage_thread():
     running = False
     ArducamSDK.Py_ArduCam_endCaptureImage(handle)
 
-def readImage_thread():
+def readImage_thread(publisher_img):
     global handle,running,Width,Height,save_flag,cfg,color_mode
     global COLOR_BayerGB2BGR,COLOR_BayerRG2BGR,COLOR_BayerGR2BGR,COLOR_BayerBG2BGR
+    
+    bridge = CvBridge()
+
     count = 0
     totalFrame = 0
     time0 = time.time()
     time1 = time.time()
     data = {}
-    cv2.namedWindow("ArduCam Demo",1)
+
+    # DEMO WINDOW DECISION!!!
+    #cv2.namedWindow("ArduCam Demo",1)
+    
     if not os.path.exists("images"):
         os.makedirs("images")
     while running:
@@ -200,19 +212,42 @@ def readImage_thread():
                 if color_mode < 0 and color_mode > 3:
                     image = cv2.cvtColor(image,COLOR_BayerGB2BGR)
         
+            
+            #HERE ONLY OUTPUTS CURRENT FPS -> IS THIS REALLY NEEDED?
             time1 = time.time()
             if time1 - time0 >= 1:
                 print "%s %d %s\n"%("fps:",count,"/s")
                 count = 0
                 time0 = time1
             count += 1
+
+            # POTENTIALLY SAVES THE IMAGE -> NEEDED?!
             if save_flag:
                 cv2.imwrite("images/image%d.jpg"%totalFrame,image)
                 totalFrame += 1
-                
-            image = cv2.resize(image,(640,480),interpolation = cv2.INTER_LINEAR)
+            
+            # Descide if you want to resize or not here!!
+            # ATTENTION: THIS INFLUENCES THE RESULTING FRAME RATE    
+            #image = cv2.resize(image,(640,480),interpolation = cv2.INTER_LINEAR)
 
-            cv2.imshow("ArduCam Demo",image)
+            # INCLUDE FCT INN THE FUTURE WHICH PART OF THE IMAGE I WANT TO SEE,...
+            # CROPPING IS HERE:
+            #image = image[0:640, 0:480]
+
+            # DESCIDE IF THE NORMAL DEMO WINDOW SHOULD OPEN OR NOT,...
+            #cv2.imshow("ArduCam Demo",image)
+
+            #NEWLY INSERTED ROS PUBLISHER
+            
+            try:
+                publisher_img.publish(bridge.cv2_to_imgmsg(image,'mono8'))
+            except CvBridgeError as e:
+                print(e)
+
+            #publisher_img.publish(image)
+            
+
+
             cv2.waitKey(10)
             ArducamSDK.Py_ArduCam_del(handle)
             #print "------------------------display time:",(time.time() - display_time)
@@ -239,20 +274,23 @@ signal.signal(signal.SIGTERM, sigint_handler)
 
 if __name__ == "__main__":
 
-    config_file_name = ""
-    if len(sys.argv) > 1:
-        config_file_name = sys.argv[1]
+    rospy.init_node('arducam_node', anonymous=False)
 
-        if not os.path.exists(config_file_name):
+    publisher_img = rospy.Publisher("/arducam_node/image", Image, queue_size=1)
+
+    # READING THE CONFIG FILE HERE from the launchfile!!!
+    config_file_name = rospy.get_param("~cam_model", "")
+    
+    #print config_file_name
+    #print os.path.exists(config_file_name)
+
+    if not os.path.exists(config_file_name):
             print "Config file does not exist."
             exit()
-    else:
-        showHelp()
-        exit()
 
     if camera_initFromFile(config_file_name):
         ct = threading.Thread(target=captureImage_thread)
-        rt = threading.Thread(target=readImage_thread)
+        rt = threading.Thread(target=readImage_thread,args=(publisher_img,))
         ct.start()
         rt.start()
         
