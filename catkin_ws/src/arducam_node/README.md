@@ -18,6 +18,22 @@ ATTENTION: ONLY USE THIS SUDO MODE FOR LAUNCHING THE STUFF BUT NEVER FOR BUILDIN
 # Description
 This is a further development of the ArduCAM USB Camera Shield which should yield to a ROS integrated version. Due to time issues, this is done here locally in our aroma repository. 
 
+# Writing and Reading REGISTERS:
+
+In addition I implemented a first way on how the value of some registers can be read out or actually written to:
+
+WRITING (can be achieved by typing this command in another terminal):
+
+rostopic pub /change_reg std_msgs/String "RegisterAdressToBeChanged ValueThatYouWant"
+
+e.g.: rostopic pub /change_reg std_msgs/String "0x3012 0x00FF"
+
+READING (can be achieved via this command:)
+
+rostopic pub /read_reg std_msgs/String "'RegisterToBeReadOut'"
+
+e.g.: rostopic pub /read_reg std_msgs/String "'0x3012'"
+
 # Overview
 ArduCAM USB Camera Shield is a general purpose USB camera controller board that can accommodate wide range of CMOS camera module from 0.3MP ~ 14MP.
 By using provided SDK library and demo source code, user can design their own applications.

@@ -15,6 +15,7 @@ import ArducamSDK
 import rospy
 from sensor_msgs.msg import CompressedImage, Image
 from cv_bridge import CvBridge, CvBridgeError
+from std_msgs.msg import String
 
 
 global cfg,handle,running,Width,Heigth,save_flag,color_mode
@@ -73,6 +74,24 @@ def writeSensorRegs(fileNodes):
         ArducamSDK.Py_ArduCam_writeSensorReg(handle,regAddr,val)
 
 pass
+
+def writeSingleSensorReg(reg_str,val_str):
+    global handle
+    regAddr = int(reg_str,16)
+    val = int(val_str,16)
+    ArducamSDK.Py_ArduCam_writeSensorReg(handle,regAddr,val)
+    #check if value sucessfully changed:
+    if (val == ArducamSDK.Py_ArduCam_readSensorReg(handle,regAddr)[1]):
+    	print ("SUCCESFULLY CHANGED" + ' ' + hex(regAddr) + ' ' + "TO" + ' ' + hex(val))
+    else:
+    	rospy.logerr ("WRITING COMMAND NOT SUCCESFULL") 
+
+def readSingleSensorReg(reg_str):
+    global handle
+    regAddr = int(reg_str,16)
+    val = ArducamSDK.Py_ArduCam_readSensorReg(handle,regAddr)[1]
+    print ("VALUE OF" + ' ' + hex(regAddr) + ' ' + "IS" + ' ' + hex(val))
+
 
 def camera_initFromFile(fialeName):
     global cfg,handle,Width,Height,color_mode
@@ -216,7 +235,8 @@ def readImage_thread(publisher_img):
             #HERE ONLY OUTPUTS CURRENT FPS -> IS THIS REALLY NEEDED?
             time1 = time.time()
             if time1 - time0 >= 1:
-                print "%s %d %s\n"%("fps:",count,"/s")
+                #print "%s %d %s\n"%("fps:",count,"/s")
+                print (time1 - time0)
                 count = 0
                 time0 = time1
             count += 1
@@ -253,6 +273,30 @@ def readImage_thread(publisher_img):
             #print "------------------------display time:",(time.time() - display_time)
         else:
             time.sleep(0.001);
+
+def register_changer():
+	rospy.Subscriber("change_reg", String, callback_change) 
+	# spin() simply keeps python from exiting until this node is stopped
+
+def callback_change(data):
+	#rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
+	split_str = data.data.split()
+	if (len(split_str)==2):
+		writeSingleSensorReg(split_str[0],split_str[1])
+	else:
+		print ("INVALID WRITING STATEMENT")
+
+def register_reader():
+	rospy.Subscriber("read_reg", String, callback_read) 
+	# spin() simply keeps python from exiting until this node is stopped
+
+def callback_read(data):
+	#rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
+	split_str = data.data.split()
+	if (len(split_str)==1):
+		readSingleSensorReg(split_str[0])
+	else:
+		print ("INVALID READING STATEMENT")
         
 def showHelp():
     print " usage: sudo python ArduCam_Py_Demo.py <path/config-file-name>	\
@@ -294,8 +338,14 @@ if __name__ == "__main__":
         ct.start()
         rt.start()
         
+        register_changer()
+        register_reader()
+        rospy.spin()
+
+
         while running:
             input_kb = str(sys.stdin.readline()).strip("\n")
+            print ("HELLO I AM HERE 1")
 
             if input_kb == 'q' or input_kb == 'Q':
                 running = False
@@ -306,6 +356,7 @@ if __name__ == "__main__":
 
         ct.join()
         rt.join()
+        print ("HELLO I AM HERE 2")
         #pause
         #ArducamSDK.Py_ArduCam_writeReg_8_8(handle,0x46,3,0x40)
         rtn_val = ArducamSDK.Py_ArduCam_close(handle)
