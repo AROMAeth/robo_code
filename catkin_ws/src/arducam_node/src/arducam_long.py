@@ -237,6 +237,14 @@ def readImage_thread(publisher_img):
                         image = RGB565ToMat(data)
                     if emImageFmtMode == ArducamSDK.FORMAT_MODE_MON:
                         image = np.frombuffer(data, np.uint8).reshape( Height,Width , 1 )
+                        print "HALLO"
+                        bigger0 = (image>0).sum()
+                        bigger20 = (image > 20).sum()
+                        bigger50 = (image > 50).sum()
+                        bigger100 = (image > 100).sum()
+                        bigger150 = (image > 150).sum()
+                        bigger200 = (image > 200).sum()
+                        print bigger0-bigger20
                     if emImageFmtMode == ArducamSDK.FORMAT_MODE_RAW:
                         image = np.frombuffer(data, np.uint8).reshape( Height,Width , 1 )
                         if color_mode == 0:
