@@ -3,6 +3,6 @@
 
 	<param name="~cam_model" value="$(arg cam_model)" type="string"/>
 
-    <node name="arducam_node" pkg="arducam_node" type="arducam.py" output="screen">
+    <node name="arducam_node" pkg="arducam_node" type="arducam_long.py" output="screen">
     </node>
 </launch>
