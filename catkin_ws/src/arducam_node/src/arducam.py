@@ -168,7 +168,7 @@ def captureImage_thread():
     else:
         print "Capture began, rtn_val = ",rtn_val
     
-    while running:
+    while (running and (not rospy.is_shutdown())):
         #print "capture"
         rtn_val = ArducamSDK.Py_ArduCam_captureImage(handle)
         if rtn_val != 0:
@@ -297,6 +297,16 @@ def callback_read(data):
 		readSingleSensorReg(split_str[0])
 	else:
 		print ("INVALID READING STATEMENT")
+
+
+# dummy class which handles what happens on ROS shutdown!!!
+class onRosShutdown(object):
+    def __init__(self):
+    	pass
+
+    def onShutdown(self):
+        rospy.loginfo('Shutting down Arducam Image Capture due to ROS ending!!!')
+
         
 def showHelp():
     print " usage: sudo python ArduCam_Py_Demo.py <path/config-file-name>	\
@@ -340,6 +350,9 @@ if __name__ == "__main__":
         
         register_changer()
         register_reader()
+
+        handleShutdown = onRosShutdown()
+        rospy.on_shutdown(handleShutdown.onShutdown)
         rospy.spin()
 
 
