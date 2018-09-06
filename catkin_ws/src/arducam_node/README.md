@@ -15,6 +15,12 @@ Then in the root mode simply type: roslaunch arducam_node arducam_node.launch
 
 ATTENTION: ONLY USE THIS SUDO MODE FOR LAUNCHING THE STUFF BUT NEVER FOR BUILDING ETC.
 
+# LOGGING
+
+rostopic pub /logging_topic std_msgs/String "true hallo" 
+
+(1st argument tells if we want to start or end,...)
+
 # Description
 This is a further development of the ArduCAM USB Camera Shield which should yield to a ROS integrated version. Due to time issues, this is done here locally in our aroma repository. 
 
