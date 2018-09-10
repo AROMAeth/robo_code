@@ -19,7 +19,7 @@ from std_msgs.msg import String
 
 
 global cfg,handle,running,Width,Heigth,save_flag,color_mode,ct_lock,rt_lock,count1
-global logging, logname,loghandle,loghandle1,logpath, log_stepsize, curr_logging
+global logging, logname,loghandle,loghandle1,logpath, log_stepsize, curr_logging, max_num_frames_log, curr_num_frames_log
 
 count1 = 0
 ct_lock = threading.Lock()
@@ -30,6 +30,9 @@ logname = "unknown"
 logpath = "/home/niggi/Desktop/arducam_logs"
 log_stepsize = 10
 curr_logging = False
+
+max_num_frames_log=5
+curr_num_frames_log=0
 
 running = True
 save_flag = False
@@ -206,7 +209,7 @@ def captureImage_thread():
 def readImage_thread(publisher_img):
 	global handle,running,Width,Height,save_flag,cfg,color_mode, rt_lock, count1
 	global COLOR_BayerGB2BGR,COLOR_BayerRG2BGR,COLOR_BayerGR2BGR,COLOR_BayerBG2BGR
-	global logpath,loghandle,log_stepsize,logging, curr_logging, loghandle1
+	global logpath,loghandle,log_stepsize,logging, curr_logging, loghandle1, max_num_frames_log, curr_num_frames_log
 
 
 
@@ -271,6 +274,16 @@ def readImage_thread(publisher_img):
 							#last one:
 							smaller = (image < 256).sum()
 							loghandle.write(str(smaller - prev_bin) + ';' + '\n')
+
+							curr_num_frames_log +=1
+
+							if not (curr_num_frames_log<=max_num_frames_log):
+								logging = False
+								loghandle.close()
+								loghandle1.close()
+								print "Logging to" + logname + "has ended"
+								curr_num_frames_log=0
+
 							curr_logging = False
 
 					if emImageFmtMode == ArducamSDK.FORMAT_MODE_RAW:

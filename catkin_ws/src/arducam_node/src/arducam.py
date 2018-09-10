@@ -192,7 +192,7 @@ def readImage_thread(publisher_img):
     data = {}
 
     # DEMO WINDOW DECISION!!!
-    #cv2.namedWindow("ArduCam Demo",1)
+    cv2.namedWindow("ArduCam Demo",1)
     
     if not os.path.exists("images"):
         os.makedirs("images")
@@ -255,7 +255,7 @@ def readImage_thread(publisher_img):
             #image = image[0:640, 0:480]
 
             # DESCIDE IF THE NORMAL DEMO WINDOW SHOULD OPEN OR NOT,...
-            #cv2.imshow("ArduCam Demo",image)
+            cv2.imshow("ArduCam Demo",image)
 
             #NEWLY INSERTED ROS PUBLISHER
             
