@@ -1,0 +1,6 @@
+<launch>
+
+    <node name="aroma_drive_node" pkg="aroma_drive" type="drive.py" output="screen">
+    </node>
+
+</launch>
