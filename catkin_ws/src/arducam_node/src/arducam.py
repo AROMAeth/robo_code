@@ -170,7 +170,10 @@ def captureImage_thread():
     
     while (running and (not rospy.is_shutdown())):
         #print "capture"
+        time0 = time.time()
         rtn_val = ArducamSDK.Py_ArduCam_captureImage(handle)
+        time1 = time.time()
+        print str(time1-time0)
         if rtn_val != 0:
             print "Error capture image, rtn_val = ",rtn_val
             break
@@ -192,7 +195,7 @@ def readImage_thread(publisher_img):
     data = {}
 
     # DEMO WINDOW DECISION!!!
-    cv2.namedWindow("ArduCam Demo",1)
+    #cv2.namedWindow("ArduCam Demo",1)
     
     if not os.path.exists("images"):
         os.makedirs("images")
@@ -234,9 +237,10 @@ def readImage_thread(publisher_img):
             
             #HERE ONLY OUTPUTS CURRENT FPS -> IS THIS REALLY NEEDED?
             time1 = time.time()
+            #print str(time1 - display_time)
             if time1 - time0 >= 1:
-                #print "%s %d %s\n"%("fps:",count,"/s")
-                print (time1 - time0)
+                print "%s %d %s\n"%("fps:",count,"/s")
+                #print (time1 - time0)
                 count = 0
                 time0 = time1
             count += 1
@@ -244,6 +248,7 @@ def readImage_thread(publisher_img):
             # POTENTIALLY SAVES THE IMAGE -> NEEDED?!
             if save_flag:
                 cv2.imwrite("images/image%d.jpg"%totalFrame,image)
+                print "HALLO"
                 totalFrame += 1
             
             # Descide if you want to resize or not here!!
@@ -255,20 +260,16 @@ def readImage_thread(publisher_img):
             #image = image[0:640, 0:480]
 
             # DESCIDE IF THE NORMAL DEMO WINDOW SHOULD OPEN OR NOT,...
-            cv2.imshow("ArduCam Demo",image)
+            #cv2.imshow("ArduCam Demo",image)
 
             #NEWLY INSERTED ROS PUBLISHER
             
-            try:
-                publisher_img.publish(bridge.cv2_to_imgmsg(image,'mono8'))
-            except CvBridgeError as e:
-                print(e)
+            #try:
+            #    publisher_img.publish(bridge.cv2_to_imgmsg(image,'mono8'))
+            #except CvBridgeError as e:
+            #    print(e)
 
-            #publisher_img.publish(image)
-            
-
-
-            cv2.waitKey(10)
+            #cv2.waitKey(10)
             ArducamSDK.Py_ArduCam_del(handle)
             #print "------------------------display time:",(time.time() - display_time)
         else:
