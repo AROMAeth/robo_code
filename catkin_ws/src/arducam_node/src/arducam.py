@@ -335,6 +335,7 @@ if __name__ == "__main__":
 
     # READING THE CONFIG FILE HERE from the launchfile!!!
     config_file_name = rospy.get_param("~cam_model", "")
+    print config_file_name
     
     #print config_file_name
     #print os.path.exists(config_file_name)
