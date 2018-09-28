@@ -1,5 +1,5 @@
 <launch>
-	<arg name="cam_model" default="$(find arducam_node)/cfg/MT9J001_10MP_opt.json" doc="specify camera model"/>
+	<arg name="cam_model" default="$(find arducam_node)/cfg/MT9J001_10MP_opt_m.json" doc="specify camera model"/>
 
 	<param name="~cam_model" value="$(arg cam_model)" type="string"/>
 
