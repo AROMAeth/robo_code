@@ -264,10 +264,10 @@ def readImage_thread(publisher_img):
 
             #NEWLY INSERTED ROS PUBLISHER
             
-            #try:
-            #    publisher_img.publish(bridge.cv2_to_imgmsg(image,'mono8'))
-            #except CvBridgeError as e:
-            #    print(e)
+            try:
+                publisher_img.publish(bridge.cv2_to_imgmsg(image,'mono8'))
+            except CvBridgeError as e:
+                print(e)
 
             #cv2.waitKey(10)
             ArducamSDK.Py_ArduCam_del(handle)
