@@ -52,6 +52,7 @@ class AromaAirPump(object):
             GPIO.output(self.pins, 0)
             time.sleep(period*(1-percentage))
             #print "BELLO CIAO"
+        print ("Airpump cycle has ended!")
 
 
 
