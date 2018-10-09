@@ -25,6 +25,18 @@
   <arg name="straight_speed1" default="0.328" doc="Is a relative factor to adapt the speed in m/s. Has to be properly calibrated"/>
   <arg name="angle_speed1" default="48.8" doc="Is a relative factor that defines the turning speed in deg/s. Has to be properly calibrated!"/>
 
+  <!-- below are all the Parameters that are needed for the FSM itself,...!!! -->
+
+
+
+ <!-- below are all the Parameters that are needed for the Finite State Machine itself!!! -->
+
+  <param name="~pump1" value="$(arg pump1)"/>
+  <param name="~pump2" value="$(arg pump2)"/>
+  <param name="~pump3" value="$(arg pump3)"/>
+
+  <node name="aroma_fsm_node" pkg="aroma_fsm" type="fsm.py" output="screen">
+    </node>
 
 
   <!-- below happen all the Launches!!! -->

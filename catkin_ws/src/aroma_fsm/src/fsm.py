@@ -12,111 +12,99 @@ import time
 import numpy as np
 
 
-class AromaStepper(object):
+
+class AromaFSM(object):
     def __init__(self):
         GPIO.setmode(GPIO.BOARD)
 
-        self.pump_name = rospy.get_param("~name", "")
-        read_string = rospy.get_param("~pins", "")
-        a = read_string.split(",")
-        self.pins = np.array(([int(a[0]),int(a[1]),int(a[2]),int(a[3])]),dtype=int)
-        #print self.pins
-        step_size = rospy.get_param("~step_size", "")
-        self.ul_per_step = (1/step_size)*1000
-        #print self.ul_per_step
+        #INIT ALL DYNAMIC PARAMETERS:
+        medium_tank_name = rospy.get_param("~pump1", "")
+        spill_tank_name = rospy.get_param("~pump2", "")
+        microfluidic_name = rospy.get_param("~pump3", "")
 
-        #CREATE ALL THE SUBSCRIBERS:
-        self.sub_topic1 = '/{}/syringe_control'.format(self.pump_name)
-        self.subscriber1 = rospy.Subscriber(self.sub_topic1, String, self.callback_control,queue_size=1)
+        #NOW DEFINE THE PARAMETERS:
+        #medium tank parameters: 1)direction 2)volume in ul 3)speed in ul per min
+        self.medium_tank_dir = "push"
+        self.medium_tank_vol = 100.0
+        self.medium_tank_speed = 1000.0
+        self.medium_tank_ended = False
 
+        #spill tank parameters: 1)direction 2)volume in ul 3)speed in ul per min
+        self.spill_tank_dir = "pull"
+        self.spill_tank_vol = 100.0
+        self.spill_tank_speed = 1000.0
+        self.spill_tank_ended = False
 
+        #microfluidic tank parameters: 1)direction 2)volume in ul 3)speed in ul per min
+        self.microfluidic_tank_dir = "pull"
+        self.microfluidic_tank_vol = 100.0
+        self.microfluidic_tank_speed = 1000.0
+        self.microfluidic_tank_ended = False
 
-        for pin in self.pins:
-          GPIO.setup(pin, GPIO.OUT)
-          GPIO.output(pin, 0)
-
-        self.halfstep_seq = [
-          [1,0,0,0],
-          [1,1,0,0],
-          [0,1,0,0],
-          [0,1,1,0],
-          [0,0,1,0],
-          [0,0,1,1],
-          [0,0,0,1],
-          [1,0,0,1]
-        ]
-        #self.move_backward(500,0.5)
-	# time.sleep(5)
-        #self.move_forward(500,0.1)
-
-    def callback_control(self,msg):
-        #rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
-        split_str = msg.data.split()
-        if (len(split_str)==3):
-            if (split_str[0]=="push"):
-                print (self.pump_name + " PUSHING VOL OF: " + str(float(split_str[1]))+ " uL WITH " + str(float(split_str[2])) + "uL/min")
-                self.move_push(float(split_str[1]),float(split_str[2]))
-            elif (split_str[0]=="pull"):
-                print (self.pump_name + " PULLING VOL OF: " + str(float(split_str[1]))+ " uL WITH " + str(float(split_str[2])) + "uL/min")
-                self.move_pull(float(split_str[1]),float(split_str[2]))
-            else:
-                print (self.pump_name + " INVALID READING STATEMENT") 
-        else:
-            print (self.pump_name + " INVALID READING STATEMENT")
+        #DEFINE THE BUBBLING PARAMETERS
+        self.bubbling_time = 10.0
+        self.bubbling_period = 5.0
+        self.bubbling_percentage = 0.5
+        self.bubbling_ended = False
 
 
+        #PUMPING:
+        self.sub_topic1 = '/{}/syringe_control_ended'.format(medium_tank_name)
+        self.subscriber1 = rospy.Subscriber(self.sub_topic1, Bool, self.callback_medium_tank,queue_size=1)
+
+        self.sub_topic2 = '/{}/syringe_control_ended'.format(spill_tank_name)
+        self.subscriber2 = rospy.Subscriber(self.sub_topic2, Bool, self.callback_spill_tank,queue_size=1)
+
+        self.sub_topic3 = '/{}/syringe_control_ended'.format(microfluidic_tank_name)
+        self.subscriber3 = rospy.Subscriber(self.sub_topic3, Bool, self.callback_microfluidic_tank,queue_size=1)
+
+        self.pub_topic1 = '/{}/syringe_control'.format(medium_tank_name)
+        self.publisher_medium = rospy.Publisher(self.pub_topic1, String, queue_size=1)
+
+        self.pub_topic2 = '/{}/syringe_control'.format(spill_tank_name)
+        self.publisher_spill = rospy.Publisher(self.pub_topic2, String, queue_size=1)
+
+        self.pub_topic3 = '/{}/syringe_control'.format(microfluidic_tank_name)
+        self.publisher_microfluidic = rospy.Publisher(self.pub_topic3, String, queue_size=1)
+
+        #BUBBLING:
+        self.sub_topic4 = '/aroma_airpump/control_ended'
+        self.subscriber4 = rospy.Subscriber(self.sub_topic4, Bool, self.callback_bubbling,queue_size=1)
+
+        self.pub_topic4 = '/aroma_airpump/control'
+        self.publisher_airpump = rospy.Publisher(self.pub_topic4, String, queue_size=1)
+
+        #DRIVING:
+        self.sub_topic5 = '/aroma_drive/control_ended'
+        self.subscriber5 = rospy.Subscriber(self.sub_topic5, Bool, self.callback_drive,queue_size=1)
+
+        self.pub_topic5 = '/aroma_airpump/control'
+        self.publisher_drive = rospy.Publisher(self.pub_topic5, String, queue_size=1)
 
 
-    # volume in ul
-    # speed in ul per min
-    def move_push(self,vol, speed):
+        #call the bubbling cycle for once!!! <-> init measurement!!!
 
-        speed_stepspermin = speed/self.ul_per_step
-        T_steps = 60/speed_stepspermin
-        t_delay = T_steps/8
 
-        #print ("Delay between Steps =", T_steps)
-        steps = int(vol / self.ul_per_step)
+        #NOW create the publishers and subscribers!!!
 
-        #print ("Number of Steps     =", steps)
-        for i in range(steps):
-            for halfstep in range(8):
-                for pin in range(4):
-                    GPIO.output(self.pins[pin], self.halfstep_seq[halfstep][pin])
-                time.sleep(max(t_delay,0.001))
 
-        print (self.pump_name + "finished pushing")
 
-    # volume in ul
-    # speed in ul per min
-    def move_pull(self,vol, speed):
-
-        speed_stepspermin = speed/self.ul_per_step
-        T_steps = 60/speed_stepspermin
-        t_delay = T_steps/8
-
-        steps = int(vol / self.ul_per_step)
-
-        for i in range(steps):
-            for halfstep in range(7,-1,-1):
-                for pin in range(4):
-                    GPIO.output(self.pins[pin], self.halfstep_seq[halfstep][pin])
-                time.sleep(max(t_delay,0.001))
-        
-        print (self.pump_name + "finished pulling")
-
+    #HERE NOW THE SIGNAL FLOW COMES IN: STEP 1 -> WE DRIVE!!!
+    def callback_drive(self,msg):
+        if(msg.data):
+            create_str = (self.medium_tank_dir + " " + str(self.medium_tank_vol) + " " + str(self.medium_tank_vol))
+            #now call the pump to move
+            self.publisher_medium.publish(create_str)
 
 
 
     def onShutdown(self):
-        rospy.loginfo('Shutting down Aroma Stepper Action, back to unsafe mode')
-        GPIO.cleanup()
+        rospy.loginfo('Shutting down Aroma FSM Action, back to unsafe mode')
 
 
  
 if __name__ == '__main__':
-    pump_name = rospy.get_param("~name", "")
-    rospy.init_node(pump_name+"_pump", anonymous=False)
-    aroma_stepper_node = AromaStepper()
-    rospy.on_shutdown(aroma_stepper_node.onShutdown)
-    rospy.spin()
+    rospy.init_node('aroma_FSM_node', anonymous=False)
+    aroma_fsm_node = AromaFSM()
+    rospy.on_shutdown(aroma_fsm_node.onShutdown)
+    rospy.spin() #DRIVE BEFEHL STARTET ALLES!!!
