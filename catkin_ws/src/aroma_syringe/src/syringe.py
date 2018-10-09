@@ -12,10 +12,16 @@ import time
 import numpy as np
 
 
-
 class AromaStepper(object):
     def __init__(self):
         GPIO.setmode(GPIO.BOARD)
+
+        self.pump_name = rospy.get_param("~name", "")
+        read_string = rospy.get_param("~pins", "")
+        a = read_string.split(",")
+        self.pins = np.array(([int(a[0]),int(a[1]),int(a[2]),int(a[3])]),dtype=int)
+        #print self.pins
+        self.step_size = rospy.get_param("~step_size", "")
 
         #INIT ALL PARAMETERS:
         self.want_move_backward = False
@@ -26,7 +32,7 @@ class AromaStepper(object):
         self.steps_backward = 500
 
         #CREATE ALL THE SUBSCRIBERS:
-        self.sub_topic1 = '/aroma_interface/stop'
+        self.sub_topic1 = '/{}/syringe_control'.format(self.pump_name)
         self.subscriber1 = rospy.Subscriber(self.sub_topic1, Bool, self.callback_stop,queue_size=1)
 
 
@@ -59,9 +65,7 @@ class AromaStepper(object):
 
 
 
-        self.control_pins = [7,11,13,15]
-
-        for pin in self.control_pins:
+        for pin in self.pins:
           GPIO.setup(pin, GPIO.OUT)
           GPIO.output(pin, 0)
 
@@ -181,7 +185,8 @@ class AromaStepper(object):
 
  
 if __name__ == '__main__':
-    rospy.init_node('aroma_stepper_node', anonymous=False)
+    pump_name = rospy.get_param("~name", "")
+    rospy.init_node(pump_name+"_pump", anonymous=False)
     aroma_stepper_node = AromaStepper()
     rospy.on_shutdown(aroma_stepper_node.onShutdown)
     rospy.spin()

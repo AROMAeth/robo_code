@@ -1,6 +1,14 @@
 <launch>
 
-    <node name="aroma_syringe_node" pkg="aroma_syringe" type="syringe.py" output="screen">
+	<arg name="name" default="noname" doc="Name of the syringe, defines under which name later topic is created"/>
+    <arg name="step_size" default="3650" doc="Specify the number of steps YOUR stepper needs to pump a volume of 1mL"/>
+    <arg name="pins" default="13,15,19,21" doc="Specify the pins your pump is connected to"/>
+    
+    <param name="~name" value="$(arg name)"/>
+    <param name="~step_size" value="$(arg step_size)" type="double"/>
+    <param name="~pins" value="$(arg pins)" type="str"/>
+
+    <node name="aroma_syringe_node1" pkg="aroma_syringe" type="syringe.py" output="screen">
     </node>
 
 </launch>
