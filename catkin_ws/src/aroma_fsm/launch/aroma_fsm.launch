@@ -33,7 +33,7 @@
 
 
   <!-- below are all the Parameters that are needed for the FSM itself,...!!! -->
-
+  <arg name="automatic" default="true" doc="Specify the pins your wheels are connected to"/>
 
 
  <!-- below are all the Parameters that are needed for the Finite State Machine itself!!! -->
@@ -41,6 +41,7 @@
   <param name="~pump1" value="$(arg pump1)"/>
   <param name="~pump2" value="$(arg pump2)"/>
   <param name="~pump3" value="$(arg pump3)"/>
+  <param name="~automatic" value="$(arg automatic)" type="bool"/>
 
   <node name="aroma_fsm_node" pkg="aroma_fsm" type="fsm.py" output="screen">
     </node>

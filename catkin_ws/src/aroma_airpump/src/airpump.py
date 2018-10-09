@@ -69,7 +69,6 @@ class AromaAirPump(object):
 
  
 if __name__ == '__main__':
-    print "HEEEEEEELLLLLLOOOOOOOOOOOOOOO"
     rospy.init_node('aroma_airpump_node', anonymous=False)
     aroma_airpump_node = AromaAirPump()
     rospy.on_shutdown(aroma_airpump_node.onShutdown)

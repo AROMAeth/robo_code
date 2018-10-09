@@ -21,6 +21,10 @@ class AromaFSM(object):
         medium_tank_name = rospy.get_param("~pump1", "")
         spill_tank_name = rospy.get_param("~pump2", "")
         microfluidic_name = rospy.get_param("~pump3", "")
+        # the automatic mode determines if there is the follow up on the actions,...
+        self.automatic_mode = rospy.get_param("~automatic", "")
+        print "STATE OF THE AUTOMATIC MODE:"
+        print self.automatic_mode
 
         #NOW DEFINE THE PARAMETERS:
         #medium tank parameters: 1)direction 2)volume in ul 3)speed in ul per min
@@ -49,37 +53,38 @@ class AromaFSM(object):
 
 
         #PUMPING:
-        self.sub_topic1 = '/{}/syringe_control_ended'.format(medium_tank_name)
-        self.subscriber1 = rospy.Subscriber(self.sub_topic1, Bool, self.callback_medium_tank,queue_size=1)
+        if(self.automatic_mode):
+            self.sub_topic1 = '/{}/syringe_control_ended'.format(medium_tank_name)
+            self.subscriber1 = rospy.Subscriber(self.sub_topic1, Bool, self.callback_medium_tank,queue_size=1)
 
-        self.sub_topic2 = '/{}/syringe_control_ended'.format(spill_tank_name)
-        self.subscriber2 = rospy.Subscriber(self.sub_topic2, Bool, self.callback_spill_tank,queue_size=1)
+            self.sub_topic2 = '/{}/syringe_control_ended'.format(spill_tank_name)
+            self.subscriber2 = rospy.Subscriber(self.sub_topic2, Bool, self.callback_spill_tank,queue_size=1)
 
-        self.sub_topic3 = '/{}/syringe_control_ended'.format(microfluidic_name)
-        self.subscriber3 = rospy.Subscriber(self.sub_topic3, Bool, self.callback_microfluidic_tank,queue_size=1)
+            self.sub_topic3 = '/{}/syringe_control_ended'.format(microfluidic_name)
+            self.subscriber3 = rospy.Subscriber(self.sub_topic3, Bool, self.callback_microfluidic_tank,queue_size=1)
 
-        self.pub_topic1 = '/{}/syringe_control'.format(medium_tank_name)
-        self.publisher_medium = rospy.Publisher(self.pub_topic1, String, queue_size=1)
+            self.pub_topic1 = '/{}/syringe_control'.format(medium_tank_name)
+            self.publisher_medium = rospy.Publisher(self.pub_topic1, String, queue_size=1)
 
-        self.pub_topic2 = '/{}/syringe_control'.format(spill_tank_name)
-        self.publisher_spill = rospy.Publisher(self.pub_topic2, String, queue_size=1)
+            self.pub_topic2 = '/{}/syringe_control'.format(spill_tank_name)
+            self.publisher_spill = rospy.Publisher(self.pub_topic2, String, queue_size=1)
 
-        self.pub_topic3 = '/{}/syringe_control'.format(microfluidic_name)
-        self.publisher_microfluidic = rospy.Publisher(self.pub_topic3, String, queue_size=1)
+            self.pub_topic3 = '/{}/syringe_control'.format(microfluidic_name)
+            self.publisher_microfluidic = rospy.Publisher(self.pub_topic3, String, queue_size=1)
 
-        #BUBBLING:
-        self.sub_topic4 = '/aroma_airpump/control_ended'
-        self.subscriber4 = rospy.Subscriber(self.sub_topic4, Bool, self.callback_bubbling,queue_size=1)
+            #BUBBLING:
+            self.sub_topic4 = '/aroma_airpump/control_ended'
+            self.subscriber4 = rospy.Subscriber(self.sub_topic4, Bool, self.callback_bubbling,queue_size=1)
 
-        self.pub_topic4 = '/aroma_airpump/control'
-        self.publisher_airpump = rospy.Publisher(self.pub_topic4, String, queue_size=1)
+            self.pub_topic4 = '/aroma_airpump/control'
+            self.publisher_airpump = rospy.Publisher(self.pub_topic4, String, queue_size=1)
 
-        #DRIVING:
-        self.sub_topic5 = '/aroma_drive/control_ended'
-        self.subscriber5 = rospy.Subscriber(self.sub_topic5, Bool, self.callback_drive,queue_size=1)
+            #DRIVING:
+            self.sub_topic5 = '/aroma_drive/control_ended'
+            self.subscriber5 = rospy.Subscriber(self.sub_topic5, Bool, self.callback_drive,queue_size=1)
 
-        self.pub_topic5 = '/aroma_airpump/control'
-        self.publisher_drive = rospy.Publisher(self.pub_topic5, String, queue_size=1)
+            self.pub_topic5 = '/aroma_airpump/control'
+            self.publisher_drive = rospy.Publisher(self.pub_topic5, String, queue_size=1)
 
 
         #call the bubbling cycle for once!!! <-> init measurement!!!
