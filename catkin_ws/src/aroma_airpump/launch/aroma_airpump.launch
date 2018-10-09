@@ -1,8 +1,7 @@
 <launch>
 
-	<!-- below are the pins needed for driving -->
-	<!-- Here: [[37,35],[23,33],[36,32],[40,38]] #[front left, front right, back left, back right] -->
-	<arg name="pins" default="20" doc="Specify the pin your pump is connected to"/>
+	<!-- below is the pin that is needed to control the airpump for the bubbling -->
+	<arg name="pins" default="8" doc="Specify the pin your pump is connected to"/>
     <arg name="node_name" default="aroma_airpump_node" doc="Name of the node"/>
     
     <param name="~pins" value="$(arg pins)" type="str"/>
