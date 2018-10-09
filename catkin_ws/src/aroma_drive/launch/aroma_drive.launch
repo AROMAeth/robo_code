@@ -1,6 +1,17 @@
 <launch>
 
-    <node name="aroma_drive_node" pkg="aroma_drive" type="drive.py" output="screen">
+	<!-- below are the pins needed for driving -->
+	<!-- Here: [[37,35],[23,33],[36,32],[40,38]] #[front left, front right, back left, back right] -->
+	<arg name="pins" default="37,35,23,33,36,32,40,38" doc="Specify the pins your pump is connected to"/>
+    <arg name="node_name" default="aroma_drive_node" doc="Name of the node"/>
+    <arg name="straight_speed" default="1.0" doc="Is a relative factor to adapt the speed in m/s. Has to be properly calibrated"/>
+    <arg name="angle_speed" default="1.0" doc="Is a relative factor that defines the turning speed in deg/s. Has to be properly calibrated!"/>
+    
+    <param name="~pins" value="$(arg pins)" type="str"/>
+    <param name="~straight_speed" value="$(arg straight_speed)" type="double"/>
+    <param name="~angle_speed" value="$(arg angle_speed)" type="double"/>
+
+    <node name="$(arg node_name)" pkg="aroma_syringe" type="syringe.py" output="screen">
     </node>
 
 </launch>
