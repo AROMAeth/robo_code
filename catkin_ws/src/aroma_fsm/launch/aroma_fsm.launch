@@ -1,6 +1,6 @@
 <launch>
 	
-	<!-- below are all the Arguments that are needed to run three Syringes!!! -->
+	<!-- below are all the Parameters defined that are needed to run three Syringes!!! -->
 
 	<arg name="pump1" default="medium_tank" doc=""/>
 	<arg name="step_size1" default="110" doc=""/>
@@ -18,7 +18,17 @@
 	<arg name="node_name3" default="aroma_syringe_node3" doc=""/>
 
 
+  <!-- below are all the Parameters defined that are needed for the driving!!! -->
+  
+  <arg name="pins4" default="37,35,23,33,36,32,40,38" doc="Specify the pins your pump is connected to"/>
+  <arg name="node_name4" default="aroma_drive_node" doc="Name of the node"/>
+  <arg name="straight_speed1" default="0.328" doc="Is a relative factor to adapt the speed in m/s. Has to be properly calibrated"/>
+  <arg name="angle_speed1" default="48.8" doc="Is a relative factor that defines the turning speed in deg/s. Has to be properly calibrated!"/>
 
+
+
+  <!-- below happen all the Launches!!! -->
+    
     <include file="$(find aroma_syringe)/launch/aroma_syringe.launch">
       <arg name="name" value="$(arg pump1)" />
       <arg name="step_size" value="$(arg step_size1)" />
@@ -43,7 +53,14 @@
 
     </include>
 
-    <!-- Syringe starting ended -->
+    <include file="$(find aroma_drive)/launch/aroma_drive.launch">
+      <arg name="pins" value="$(arg pins4)" />
+      <arg name="node_name" value="$(arg node_name4)" />
+      <arg name="straight_speed" value="$(arg straight_speed1)" />
+      <arg name="angle_speed" value="$(arg angle_speed1)" />
+
+    </include>
+
 
 
 </launch>
