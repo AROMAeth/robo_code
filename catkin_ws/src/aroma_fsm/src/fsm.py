@@ -55,7 +55,7 @@ class AromaFSM(object):
         self.sub_topic2 = '/{}/syringe_control_ended'.format(spill_tank_name)
         self.subscriber2 = rospy.Subscriber(self.sub_topic2, Bool, self.callback_spill_tank,queue_size=1)
 
-        self.sub_topic3 = '/{}/syringe_control_ended'.format(microfluidic_tank_name)
+        self.sub_topic3 = '/{}/syringe_control_ended'.format(microfluidic_name)
         self.subscriber3 = rospy.Subscriber(self.sub_topic3, Bool, self.callback_microfluidic_tank,queue_size=1)
 
         self.pub_topic1 = '/{}/syringe_control'.format(medium_tank_name)
