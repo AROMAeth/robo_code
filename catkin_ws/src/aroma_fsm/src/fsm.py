@@ -92,13 +92,15 @@ class AromaFSM(object):
     #HERE NOW THE SIGNAL FLOW COMES IN: STEP 1 -> WE DRIVE!!!
     def callback_drive(self,msg):
         if(msg.data):
-            create_str = (self.medium_tank_dir + " " + str(self.medium_tank_vol) + " " + str(self.medium_tank_vol))
+            print "DRIVING ENDED"
+            create_str = (self.medium_tank_dir + " " + str(self.medium_tank_vol) + " " + str(self.medium_tank_speed))
             #now call the pump to move
             self.publisher_medium.publish(create_str)
 
     #AFTER MEDIUM WAS TAKEN IN -> NOW BUBBLE
     def callback_medium_tank(self,msg):
         if(msg.data):
+            print "MEDIUM TANK ENDED"
             create_str = (str(self.bubbling_time) + " " + str(self.bubbling_period) + " " + str(self.bubbling_percentage))
             #now call the pump to move
             self.publisher_airpump.publish(create_str)
