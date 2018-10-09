@@ -11,7 +11,7 @@
     <param name="~straight_speed" value="$(arg straight_speed)" type="double"/>
     <param name="~angle_speed" value="$(arg angle_speed)" type="double"/>
 
-    <node name="$(arg node_name)" pkg="aroma_syringe" type="syringe.py" output="screen">
+    <node name="$(arg node_name)" pkg="aroma_drive" type="drive.py" output="screen">
     </node>
 
 </launch>
