@@ -20,7 +20,7 @@ class AromaDrive(object):
         #INIT ALL PARAMETERS:
         read_string = rospy.get_param("~pins", "")
         a = read_string.split(",")
-        self.pins = np.array(([int(a[0]),int(a[1])],[int(a[2]),int(a[3])],[int(a[4]),int(a[5])],[int(a[6]),int(a[7])]),dtype=int)
+        self.pins = [[int(a[0]),int(a[1])],[int(a[2]),int(a[3])],[int(a[4]),int(a[5])],[int(a[6]),int(a[7])]]
 
         self.straight_speed = rospy.get_param("~straight_speed", "")
         self.angle_speed = rospy.get_param("~angle_speed", "")
