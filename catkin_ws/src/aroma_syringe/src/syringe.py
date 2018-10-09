@@ -35,7 +35,7 @@ class AromaStepper(object):
           GPIO.setup(pin, GPIO.OUT)
           GPIO.output(pin, 0)
 
-        halfstep_seq = [
+        self.halfstep_seq = [
           [1,0,0,0],
           [1,1,0,0],
           [0,1,0,0],
@@ -80,7 +80,7 @@ class AromaStepper(object):
         for i in range(steps):
             for halfstep in range(8):
                 for pin in range(4):
-                    GPIO.output(control_pins[pin], halfstep_seq[halfstep][pin])
+                    GPIO.output(self.pins[pin], self.halfstep_seq[halfstep][pin])
                 time.sleep(max(t_delay,0.001))
 
     # volume in ul
@@ -96,7 +96,7 @@ class AromaStepper(object):
         for i in range(steps):
             for halfstep in range(7,-1,-1):
                 for pin in range(4):
-                    GPIO.output(control_pins[pin], halfstep_seq[halfstep][pin])
+                    GPIO.output(self.pins[pin], self.halfstep_seq[halfstep][pin])
                 time.sleep(max(t_delay,0.001))
 
 
