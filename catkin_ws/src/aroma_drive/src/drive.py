@@ -83,7 +83,7 @@ class AromaDrive(object):
 
 
     def d_turnr(self,angle):
-        t = dist/self.angle_speed
+        t = angle/self.angle_speed
         GPIO.output(self.pins[0][0],1)
         GPIO.output(self.pins[1][1],1)
         GPIO.output(self.pins[2][0],1)
@@ -93,7 +93,7 @@ class AromaDrive(object):
             GPIO.output(pin, 0)
 
     def d_turnl(self,angle):
-        t = dist/self.angle_speed
+        t = angle/self.angle_speed
         GPIO.output(self.pins[0][1],1)
         GPIO.output(self.pins[1][0],1)
         GPIO.output(self.pins[2][1],1)
