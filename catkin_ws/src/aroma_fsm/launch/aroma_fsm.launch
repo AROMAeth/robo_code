@@ -25,6 +25,13 @@
   <arg name="straight_speed1" default="0.328" doc="Is a relative factor to adapt the speed in m/s. Has to be properly calibrated"/>
   <arg name="angle_speed1" default="48.8" doc="Is a relative factor that defines the turning speed in deg/s. Has to be properly calibrated!"/>
 
+
+  <!-- below are all the Parameters defined that are needed for the airpump!!! -->
+
+  <arg name="pins5" default="7" doc="Specify the pins your wheels are connected to"/>
+  <arg name="node_name5" default="aroma_airpump_node" doc="Name of the node"/>
+
+
   <!-- below are all the Parameters that are needed for the FSM itself,...!!! -->
 
 
@@ -73,6 +80,11 @@
 
     </include>
 
+    <include file="$(find aroma_airpump)/launch/aroma_airpump.launch">
+      <arg name="pins" value="$(arg pins5)" />
+      <arg name="node_name" value="$(arg node_name5)" />
+
+    </include>
 
 
 </launch>
