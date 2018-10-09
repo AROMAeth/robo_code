@@ -64,7 +64,7 @@ class AromaFSM(object):
         self.pub_topic2 = '/{}/syringe_control'.format(spill_tank_name)
         self.publisher_spill = rospy.Publisher(self.pub_topic2, String, queue_size=1)
 
-        self.pub_topic3 = '/{}/syringe_control'.format(microfluidic_tank_name)
+        self.pub_topic3 = '/{}/syringe_control'.format(microfluidic_name)
         self.publisher_microfluidic = rospy.Publisher(self.pub_topic3, String, queue_size=1)
 
         #BUBBLING:
