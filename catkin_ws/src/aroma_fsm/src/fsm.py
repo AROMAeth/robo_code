@@ -96,6 +96,32 @@ class AromaFSM(object):
             #now call the pump to move
             self.publisher_medium.publish(create_str)
 
+    #AFTER MEDIUM WAS TAKEN IN -> NOW BUBBLE
+    def callback_medium_tank(self,msg):
+        if(msg.data):
+            create_str = (str(self.bubbling_time) + " " + str(self.bubbling_period) + " " + str(self.bubbling_percentage))
+            #now call the pump to move
+            self.publisher_airpump.publish(create_str)
+
+    #BUBBLING IS OVER -> SUCK THE SHIT INTO THE CHIP
+    def callback_bubbling(self,msg):
+        if(msg.data):
+            create_str = (str(self.microfluidic_tank_dir) + " " + str(self.microfluidic_tank_vol) + " " + str(self.microfluidic_tank_speed))
+            #now call the pump to move
+            self.publisher_microfluidic.publish(create_str)
+
+    #BUBBLING MEDIUM IN CHIP -> START IMAGING AND EMPTY THE CHAMBER!!!
+    def callback_microfluidic_tank(self,msg):
+        if(msg.data):
+            print "ALSO NOW THEORETICALLY THE IMAGING CAN START"
+            create_str = (str(self.spill_tank_dir) + " " + str(self.spill_tank_vol) + " " + str(self.spill_tank_speed))
+            #now call the pump to move
+            self.publisher_spill.publish(create_str)
+
+    #IF THE SPILL PUMP IS FINISHED ONE COULD THEORETICALLY PUT IN NEW MEDIUM OR WE JUST LEAVE THE PIPELINE
+    def callback_spill_tank(self,msg):
+        if(msg.data):
+            print "CHAMBER IS EMPTY NOW"
 
 
     def onShutdown(self):
