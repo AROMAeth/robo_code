@@ -1,0 +1,6 @@
+<launch>
+
+    <node name="aroma_syringe_node" pkg="aroma_syringe" type="syringe.py" output="screen">
+    </node>
+
+</launch>
