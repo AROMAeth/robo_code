@@ -21,9 +21,8 @@ class AromaAirPump(object):
         read_string = rospy.get_param("~pins", "")
         self.pins = int(read_string)
 
-        for pin in self.pins:
-            GPIO.setup(pin, GPIO.OUT)
-            GPIO.output(pin, 0)
+        GPIO.setup(self.pins, GPIO.OUT)
+        GPIO.output(self.pins, 0)
 
         #CREATE ALL THE SUBSCRIBERS:
         self.sub_topic1 = '/aroma_airpump/control'
