@@ -23,7 +23,7 @@ class AromaStepper(object):
         #print self.pins
         step_size = rospy.get_param("~step_size", "")
         self.ul_per_step = (1/step_size)*1000
-        print self.ul_per_step
+        #print self.ul_per_step
 
         #CREATE ALL THE SUBSCRIBERS:
         self.sub_topic1 = '/{}/syringe_control'.format(self.pump_name)
@@ -54,15 +54,15 @@ class AromaStepper(object):
         split_str = msg.data.split()
         if (len(split_str)==3):
             if (split_str[0]=="push"):
-                print ("PUSHING VOL OF: " + str(float(split_str[1]))+ " uL WITH " + str(float(split_str[2])) + "uL/min")
+                print (self.pump_name + " PUSHING VOL OF: " + str(float(split_str[1]))+ " uL WITH " + str(float(split_str[2])) + "uL/min")
                 self.move_push(float(split_str[1]),float(split_str[2]))
             elif (split_str[0]=="pull"):
-                print ("PULLING VOL OF: " + str(float(split_str[1]))+ " uL WITH " + str(float(split_str[2])) + "uL/min")
+                print (self.pump_name + " PULLING VOL OF: " + str(float(split_str[1]))+ " uL WITH " + str(float(split_str[2])) + "uL/min")
                 self.move_pull(float(split_str[1]),float(split_str[2]))
             else:
-                print ("INVALID READING STATEMENT") 
+                print (self.pump_name + " INVALID READING STATEMENT") 
         else:
-            print ("INVALID READING STATEMENT")
+            print (self.pump_name + " INVALID READING STATEMENT")
 
 
 
@@ -75,10 +75,10 @@ class AromaStepper(object):
         T_steps = 60/speed_stepspermin
         t_delay = T_steps/8
 
-        print ("Delay between Steps =", T_steps)
+        #print ("Delay between Steps =", T_steps)
         steps = int(vol / self.ul_per_step)
 
-        print ("Number of Steps     =", steps)
+        #print ("Number of Steps     =", steps)
         for i in range(steps):
             for halfstep in range(8):
                 for pin in range(4):
