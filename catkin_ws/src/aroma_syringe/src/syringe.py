@@ -21,15 +21,9 @@ class AromaStepper(object):
         a = read_string.split(",")
         self.pins = np.array(([int(a[0]),int(a[1]),int(a[2]),int(a[3])]),dtype=int)
         #print self.pins
-        self.step_size = rospy.get_param("~step_size", "")
-
-        #INIT ALL PARAMETERS:
-        self.want_move_backward = False
-        self.want_move_forward = False
-        self.speed_forward = 0.1
-        self.steps_forward = 200
-        self.speed_backward = 0.5
-        self.steps_backward = 500
+        step_size = rospy.get_param("~step_size", "")
+        self.ul_per_step = (1/step_size)*1000
+        print self.ul_per_step
 
         #CREATE ALL THE SUBSCRIBERS:
         self.sub_topic1 = '/{}/syringe_control'.format(self.pump_name)
@@ -59,9 +53,9 @@ class AromaStepper(object):
         #rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
         split_str = msg.data.split()
         if (len(split_str)==3):
-            if (split_str[0])=="push"):
+            if (split_str[0]=="push"):
                 self.move_push(float(split_str[1]),float(split_str[2]))
-            elif (split_str[0])=="pull"):
+            elif (split_str[0]=="pull"):
                 self.move_pull(float(split_str[1]),float(split_str[2]))
             else:
                 print ("INVALID READING STATEMENT") 
@@ -75,12 +69,12 @@ class AromaStepper(object):
     # speed in ul per min
     def move_push(self,vol, speed):
 
-        speed_stepspermin = speed/ul_per_step
+        speed_stepspermin = speed/self.ul_per_step
         T_steps = 60/speed_stepspermin
         t_delay = T_steps/8
 
         print ("Delay between Steps =", T_steps)
-        steps = int(vol / ul_per_step)
+        steps = int(vol / self.ul_per_step)
 
         print ("Number of Steps     =", steps)
         for i in range(steps):
@@ -93,11 +87,11 @@ class AromaStepper(object):
     # speed in ul per min
     def move_pull(self,vol, speed):
 
-        speed_stepspermin = speed/ul_per_step
+        speed_stepspermin = speed/self.ul_per_step
         T_steps = 60/speed_stepspermin
         t_delay = T_steps/8
 
-        steps = int(vol / ul_per_step)
+        steps = int(vol / self.ul_per_step)
 
         for i in range(steps):
             for halfstep in range(7,-1,-1):
