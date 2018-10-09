@@ -54,8 +54,10 @@ class AromaStepper(object):
         split_str = msg.data.split()
         if (len(split_str)==3):
             if (split_str[0]=="push"):
+                print ("PUSHING VOL OF: " + str(float(split_str[1]))+ " uL WITH " + str(float(split_str[2])) + "uL/min")
                 self.move_push(float(split_str[1]),float(split_str[2]))
             elif (split_str[0]=="pull"):
+                print ("PULLING VOL OF: " + str(float(split_str[1]))+ " uL WITH " + str(float(split_str[2])) + "uL/min")
                 self.move_pull(float(split_str[1]),float(split_str[2]))
             else:
                 print ("INVALID READING STATEMENT") 
