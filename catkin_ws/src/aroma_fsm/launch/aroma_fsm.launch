@@ -1,5 +1,7 @@
 <launch>
 	
+	<!-- below are all the Arguments that are needed to run three Syringes!!! -->
+
 	<arg name="pump1" default="medium_tank" doc=""/>
 	<arg name="step_size1" default="110" doc=""/>
 	<arg name="pins1" default="13,15,19,21" doc=""/>
@@ -40,6 +42,8 @@
       <arg name="node_name" value="$(arg node_name3)" />
 
     </include>
+
+    <!-- Syringe starting ended -->
 
 
 </launch>
