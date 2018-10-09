@@ -85,6 +85,8 @@ class AromaStepper(object):
                     GPIO.output(self.pins[pin], self.halfstep_seq[halfstep][pin])
                 time.sleep(max(t_delay,0.001))
 
+        print (self.pump_name + "finished pushing")
+
     # volume in ul
     # speed in ul per min
     def move_pull(self,vol, speed):
@@ -100,6 +102,8 @@ class AromaStepper(object):
                 for pin in range(4):
                     GPIO.output(self.pins[pin], self.halfstep_seq[halfstep][pin])
                 time.sleep(max(t_delay,0.001))
+        
+        print (self.pump_name + "finished pulling")
 
 
 
