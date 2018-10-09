@@ -13,7 +13,7 @@
 	<arg name="pump3" default="microfluidic" doc=""/>
 	<arg name="step_size3" default="3650" doc=""/>
 	<arg name="pins3" default="24,26,29,31" doc=""/>
-	<arg name="node_name3" default="aroma_syringe_node2" doc=""/>
+	<arg name="node_name3" default="aroma_syringe_node3" doc=""/>
 
 
 
