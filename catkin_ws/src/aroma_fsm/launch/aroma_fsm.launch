@@ -1,0 +1,36 @@
+<launch>
+	
+	<arg name="pump1" default="medium_tank" doc=""/>
+	<arg name="step_size1" default="110" doc=""/>
+	<arg name="pins1" default="13,15,19,21" doc=""/>
+	<arg name="node_name1" default="aroma_syringe_node1" doc=""/>
+
+	<arg name="pump2" default="spill_tank" doc=""/>
+	<arg name="step_size2" default="110" doc=""/>
+	<arg name="pins2" default="12,16,18,22" doc=""/>
+	<arg name="node_name2" default="aroma_syringe_node2" doc=""/>
+
+	<arg name="pump3" default="microfluidic" doc=""/>
+	<arg name="step_size3" default="3650" doc=""/>
+	<arg name="pins3" default="24,26,29,31" doc=""/>
+
+
+
+    <include file="$(find aroma_syringe)/launch/aroma_syringe.launch">
+      <arg name="name" value="$(arg pump1)" />
+      <arg name="step_size" value="$(arg step_size1)" />
+      <arg name="pins" value="$(arg pins1)" />
+      <arg name="node_name" value="$(arg node_name1)" />
+
+    </include>
+
+  	<include file="$(find aroma_syringe)/launch/aroma_syringe.launch">
+      <arg name="name" value="$(arg pump2)" />
+      <arg name="step_size" value="$(arg step_size2)" />
+      <arg name="pins" value="$(arg pins2)" />
+      <arg name="node_name" value="$(arg node_name2)" />
+
+    </include>
+
+
+</launch>
