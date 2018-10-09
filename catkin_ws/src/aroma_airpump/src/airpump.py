@@ -28,7 +28,7 @@ class AromaAirPump(object):
         self.sub_topic1 = '/aroma_airpump/control'
         self.subscriber1 = rospy.Subscriber(self.sub_topic1, String, self.callback_control,queue_size=1)
 
-        # FEEDBACK topic to show when being ready
+        # FEEDBACK topic to show when being finished
         self.pub_topic = '/aroma_airpump/control_ended'
         self.publisher_end = rospy.Publisher(self.pub_topic, Bool, queue_size=1)
 
@@ -41,6 +41,8 @@ class AromaAirPump(object):
             self.bubble(float(split_str[0]),float(split_str[1]),float(split_str[2]))
         else:
             print (self.pump_name + " INVALID READING STATEMENT")
+
+        self.publisher_end.publish(True)
 
 
 
@@ -57,7 +59,6 @@ class AromaAirPump(object):
             time.sleep(period*(1-percentage))
             #print "BELLO CIAO"
         print ("Airpump cycle has ended!")
-        self.publisher_end.publish(True)
 
 
 

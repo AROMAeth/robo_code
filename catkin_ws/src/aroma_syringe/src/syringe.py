@@ -29,6 +29,9 @@ class AromaStepper(object):
         self.sub_topic1 = '/{}/syringe_control'.format(self.pump_name)
         self.subscriber1 = rospy.Subscriber(self.sub_topic1, String, self.callback_control,queue_size=1)
 
+        # FEEDBACK topic to show when being finished
+        self.pub_topic = '/{}/syringe_control_ended'.format(self.pump_name)
+        self.publisher_end = rospy.Publisher(self.pub_topic, Bool, queue_size=1)
 
 
         for pin in self.pins:
@@ -64,6 +67,7 @@ class AromaStepper(object):
         else:
             print (self.pump_name + " INVALID READING STATEMENT")
 
+        self.publisher_end.publish(True)
 
 
 
