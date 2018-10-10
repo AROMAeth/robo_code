@@ -29,20 +29,20 @@ class AromaFSM(object):
         #NOW DEFINE THE PARAMETERS:
         #medium tank parameters: 1)direction 2)volume in ul 3)speed in ul per min
         self.medium_tank_dir = "push"
-        self.medium_tank_vol = 100.0
-        self.medium_tank_speed = 1000.0
+        self.medium_tank_vol = 1000.0
+        self.medium_tank_speed = 10000.0
         self.medium_tank_ended = False
 
         #spill tank parameters: 1)direction 2)volume in ul 3)speed in ul per min
         self.spill_tank_dir = "pull"
-        self.spill_tank_vol = 100.0
-        self.spill_tank_speed = 1000.0
+        self.spill_tank_vol = 10.0
+        self.spill_tank_speed = 20.0
         self.spill_tank_ended = False
 
         #microfluidic tank parameters: 1)direction 2)volume in ul 3)speed in ul per min
         self.microfluidic_tank_dir = "pull"
-        self.microfluidic_tank_vol = 100.0
-        self.microfluidic_tank_speed = 1000.0
+        self.microfluidic_tank_vol = 1000.0
+        self.microfluidic_tank_speed = 10000.0
         self.microfluidic_tank_ended = False
 
         #DEFINE THE BUBBLING PARAMETERS
