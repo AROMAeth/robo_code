@@ -28,7 +28,7 @@
 
   <!-- below are all the Parameters defined that are needed for the airpump!!! -->
 
-  <arg name="pins5" default="7" doc="Specify the pins your wheels are connected to"/>
+  <arg name="pins5" default="11" doc="Specify the pins your wheels are connected to"/>
   <arg name="node_name5" default="aroma_airpump_node" doc="Name of the node"/>
 
 
