@@ -41,15 +41,17 @@ class AromaFSM(object):
 
         #microfluidic tank parameters: 1)direction 2)volume in ul 3)speed in ul per min
         self.microfluidic_tank_dir = "pull"
-        self.microfluidic_tank_vol = 5.0
-        self.microfluidic_tank_speed = 5.0
+        self.microfluidic_tank_vol = 3.0
+        self.microfluidic_tank_speed = 8.0
         self.microfluidic_tank_ended = False
 
         #DEFINE THE BUBBLING PARAMETERS
-        self.bubbling_time = 10.0
-        self.bubbling_period = 5.0
-        self.bubbling_percentage = 0.5
+        self.bubbling_time = 20.0
+        self.bubbling_period = 0.5
+        self.bubbling_percentage = 0.1
         self.bubbling_ended = False
+
+        self.num_iterations = 0
 
 
         #PUMPING:
@@ -83,7 +85,7 @@ class AromaFSM(object):
             self.sub_topic5 = '/aroma_drive/control_ended'
             self.subscriber5 = rospy.Subscriber(self.sub_topic5, Bool, self.callback_drive,queue_size=1)
 
-            self.pub_topic5 = '/aroma_airpump/control'
+           	self.pub_topic5 = '/aroma_drive/control'
             self.publisher_drive = rospy.Publisher(self.pub_topic5, String, queue_size=1)
 
 
@@ -121,14 +123,33 @@ class AromaFSM(object):
     def callback_microfluidic_tank(self,msg):
         if(msg.data):
             print "ALSO NOW THEORETICALLY THE IMAGING CAN START"
-            create_str = (str(self.spill_tank_dir) + " " + str(self.spill_tank_vol) + " " + str(self.spill_tank_speed))
+            GPIO.output(7, 1)
+            sleep(15)
             #now call the pump to move
             self.publisher_spill.publish(create_str)
+  			create_str = (str(self.spill_tank_dir) + " " + str(self.spill_tank_vol) + " " + str(self.spill_tank_speed))
+            GPIO.output(7, 0)
 
     #IF THE SPILL PUMP IS FINISHED ONE COULD THEORETICALLY PUT IN NEW MEDIUM OR WE JUST LEAVE THE PIPELINE
     def callback_spill_tank(self,msg):
         if(msg.data):
             print "CHAMBER IS EMPTY NOW"
+            if(self.num_iterations==0):
+            	create_str="forward 10.0 2"
+            	self.publisher_drive.publish(create_str)
+            elif(self.num_iterations==1):
+           		create_str="forward -10.0 2"
+            	self.publisher_drive.publish(create_str)
+            elif(self.num_iterations==1):
+           		create_str="forward -100.0 2"
+            	self.publisher_drive.publish(create_str)
+            else:
+           		create_str="forward 0.0 2"
+            	self.publisher_drive.publish(create_str)
+           	self.num_iterations = self.num_iterations+1
+
+
+
 
 
     def onShutdown(self):
