@@ -16,6 +16,8 @@ import numpy as np
 class AromaFSM(object):
     def __init__(self):
         GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(7, GPIO.OUT)
+        GPIO.output(7, 0)
 
         #INIT ALL DYNAMIC PARAMETERS:
         medium_tank_name = rospy.get_param("~pump1", "")
@@ -85,7 +87,7 @@ class AromaFSM(object):
             self.sub_topic5 = '/aroma_drive/control_ended'
             self.subscriber5 = rospy.Subscriber(self.sub_topic5, Bool, self.callback_drive,queue_size=1)
 
-           	self.pub_topic5 = '/aroma_drive/control'
+            self.pub_topic5 = '/aroma_drive/control'
             self.publisher_drive = rospy.Publisher(self.pub_topic5, String, queue_size=1)
 
 
@@ -124,29 +126,29 @@ class AromaFSM(object):
         if(msg.data):
             print "ALSO NOW THEORETICALLY THE IMAGING CAN START"
             GPIO.output(7, 1)
-            sleep(15)
+            time.sleep(15)
             #now call the pump to move
+  	    create_str = (str(self.spill_tank_dir) + " " + str(self.spill_tank_vol) + " " + str(self.spill_tank_speed))
             self.publisher_spill.publish(create_str)
-  			create_str = (str(self.spill_tank_dir) + " " + str(self.spill_tank_vol) + " " + str(self.spill_tank_speed))
-            GPIO.output(7, 0)
+	    GPIO.output(7, 0)
 
     #IF THE SPILL PUMP IS FINISHED ONE COULD THEORETICALLY PUT IN NEW MEDIUM OR WE JUST LEAVE THE PIPELINE
     def callback_spill_tank(self,msg):
         if(msg.data):
             print "CHAMBER IS EMPTY NOW"
             if(self.num_iterations==0):
-            	create_str="forward 10.0 2"
+            	create_str="forward 10.0 1.2"
             	self.publisher_drive.publish(create_str)
             elif(self.num_iterations==1):
-           		create_str="forward -10.0 2"
+           	create_str="forward -10.0 1.2"
             	self.publisher_drive.publish(create_str)
             elif(self.num_iterations==1):
-           		create_str="forward -100.0 2"
+           	create_str="forward -100.0 0.8"
             	self.publisher_drive.publish(create_str)
             else:
-           		create_str="forward 0.0 2"
+           	create_str="forward 0.0 0.8"
             	self.publisher_drive.publish(create_str)
-           	self.num_iterations = self.num_iterations+1
+            self.num_iterations = self.num_iterations+1
 
 
 
