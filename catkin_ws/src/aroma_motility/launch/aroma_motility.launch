@@ -1,0 +1,5 @@
+<launch>
+
+    <node name="aroma_motility_node" pkg="aroma_motility" type="motility_pipeline.py" output="screen">
+    </node>
+</launch>
