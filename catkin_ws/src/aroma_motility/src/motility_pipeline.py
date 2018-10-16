@@ -10,7 +10,6 @@ import signal
 import json
 import Image
 
-import ArducamSDK
 
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
@@ -121,6 +120,7 @@ class MotilityPipeline(object):
 		if (split_str[0] == "start"):
 			print("MOTILITY CODE STARTED")
 			self.active = True
+			self.state = 0
 
 	def callback_img(self, image):
 		thread = threading.Thread(target=self.callback,args=(image,))
