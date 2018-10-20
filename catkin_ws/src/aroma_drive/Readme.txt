@@ -1,10 +1,12 @@
-this is the place of our own driving system :))
+This is the node which drives AROMA around! :))
 
 TURNING LEFT == positive angle
 TURNING RIGHT == negative angle
 IMPORTANT: angle is defined from the front direction!!!
 
 In general the idea is that at first the whole robot turns for an wanted angle and then drives into the direction that it is pointing to!!!
+
+# Code usage
 
 sample usage of this code:
 rostopic pub /aroma_drive/control std_msgs/String "backward -10 0"
@@ -15,7 +17,8 @@ rostopic pub /aroma_drive/control std_msgs/String "forward 0 5"
 This lets the robot drive 5 meters forward
 
 
-CALIBRATION:
+# Calibration:
+
 As some people will use other motors or wheels and since all those dynamics will be different we decided to add basically two calibration parameters into our launchfile!!
 
 this is on the one hand the "straight_speed" and the "angle_speed".
